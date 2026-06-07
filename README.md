@@ -55,7 +55,7 @@ It helps users:
 
 ## Why I Built This
 
-I built this project to automate and improve the modern job search process, which is often fragmented across multiple platforms and requires repetitive manual effort.
+I built this project to automate and improve my job search process, which is often fragmented across multiple platforms and requires repetitive manual effort.
 
 The goal was to simulate parts of a recruiter’s workflow including job matching, screening, and candidate evaluation and turn it into a single AI-powered system.
 
