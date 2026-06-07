@@ -6,10 +6,9 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { role, location, exp, stage, industries, skills } = req.body;
+  const { role, location, exp, stage, industries, skills, background, degree, currentTitle } = req.body;
 
   try {
-    // Step 1: Fetch real job listings from JSearch
     const query = `${role} in ${location}`;
     const jsearchUrl = `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(query)}&num_pages=1&page=1&employment_types=FULLTIME`;
 
@@ -30,7 +29,6 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Step 2: Format listings for Claude to score
     const listingsText = rawJobs.map((job, i) => `
 Job ${i + 1}:
 Title: ${job.job_title}
@@ -42,7 +40,6 @@ Description: ${(job.job_description || '').slice(0, 300)}
 Apply URL: ${job.job_apply_link || ''}
     `).join('\n---\n');
 
-    // Step 3: Ask Claude to score and summarize the real listings
     const systemPrompt = `You are a job search AI agent. Given real job listings and a candidate profile, score each listing and return structured JSON. Return ONLY valid JSON, no markdown, no backticks.
 
 Exact structure:
@@ -66,20 +63,27 @@ Exact structure:
   ]
 }
 
-Pick the 4 best matching jobs. Mix fit levels honestly.`;
+Pick the 4 best matching jobs. Mix fit levels honestly. Base fit scoring entirely on the candidate profile provided — do not assume any background not stated.`;
+
+    const candidateProfile = `
+Current title / role: ${currentTitle || 'Not specified'}
+Education: ${degree || 'Not specified'}
+Experience level: ${exp}
+Background summary: ${background || 'Not provided'}
+Target industries: ${industries || 'Any'}
+Key skills: ${skills || 'Not specified'}
+Company stage preference: ${stage}
+    `.trim();
 
     const userMsg = `Candidate profile:
-- Finance + Accounting degree, Minor in Data Analytics
-- 8 months audit/assurance at Big 4 firm
-- Seeking: ${role} in ${location}
-- Experience level: ${exp}, Company stage preference: ${stage}
-- Target industries: ${industries}
-- Key skills: ${skills}
+${candidateProfile}
+
+Seeking: ${role} in ${location}
 
 Real job listings to score:
 ${listingsText}
 
-Score and summarize the 4 best matches.`;
+Score and summarize the 4 best matches based solely on the candidate profile above.`;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
