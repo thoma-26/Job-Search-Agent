@@ -224,6 +224,21 @@
   .modal-cancel { flex: 1; padding: 9px; font-size: 13px; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: var(--surface-2); color: var(--text); cursor: pointer; }
   .modal-save { flex: 2; padding: 9px; font-size: 13px; font-weight: 600; border-radius: var(--radius-md); border: none; background: var(--accent); color: var(--bg); cursor: pointer; }
 
+  /* COVER LETTER MODAL */
+  .cl-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .cl-modal-overlay.open { display: flex; }
+  .cl-modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 580px; border: 0.5px solid var(--border-2); margin: auto; }
+  .cl-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .cl-modal-title { font-size: 16px; font-weight: 600; }
+  .cl-close-btn { width: 28px; height: 28px; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: var(--surface-2); color: var(--text-2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .cl-meta { font-size: 12px; color: var(--text-2); margin-bottom: 1rem; padding: 8px 10px; background: var(--surface-2); border-radius: var(--radius-md); }
+  .cl-generate-btn { width: 100%; padding: 10px; background: var(--accent); color: var(--bg); border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; transition: opacity 0.15s; }
+  .cl-generate-btn:hover { opacity: 0.82; }
+  .cl-generate-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .cl-output { font-size: 13px; color: var(--text); line-height: 1.75; white-space: pre-wrap; background: var(--surface-2); border-radius: var(--radius-md); padding: 1rem; min-height: 80px; border: 0.5px solid var(--border); }
+  .cl-copy-btn { margin-top: 10px; padding: 8px 16px; font-size: 12px; font-weight: 500; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: var(--surface-2); color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .cl-copy-btn:hover { background: var(--surface); border-color: var(--text-3); }
+
   footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3); border-top: 0.5px solid var(--border); }
 
   @media (max-width: 640px) {
@@ -456,6 +471,24 @@
   </div>
 </div>
 
+<!-- COVER LETTER MODAL -->
+<div class="cl-modal-overlay" id="cl-modal-overlay" onclick="closeCLModalOutside(event)">
+  <div class="cl-modal">
+    <div class="cl-modal-header">
+      <div class="cl-modal-title">Cover letter generator</div>
+      <button class="cl-close-btn" onclick="closeCLModal()">×</button>
+    </div>
+    <div class="cl-meta" id="cl-job-meta">—</div>
+    <button class="cl-generate-btn" id="cl-generate-btn" onclick="generateCoverLetter()">
+      <i class="ti ti-sparkles"></i> Generate cover letter
+    </button>
+    <div class="cl-output" id="cl-output" style="display:none"></div>
+    <button class="cl-copy-btn" id="cl-copy-btn" style="display:none" onclick="copyCoverLetter()">
+      <i class="ti ti-copy"></i> Copy to clipboard
+    </button>
+  </div>
+</div>
+
 <footer>JobFinder — built with HTML, CSS, JavaScript &amp; LLM APIs &nbsp;·&nbsp; open source</footer>
 
 <script>
@@ -679,6 +712,9 @@
             <button class="action-btn" onclick="selectForMatch(${i})">
               <i class="ti ti-file-check"></i> Match resume
             </button>
+            <button class="action-btn" onclick="openCoverLetter(${i})">
+              <i class="ti ti-writing"></i> Cover letter
+            </button>
             <button class="action-btn primary" onclick="window.open('${job.applyUrl}', '_blank')">
               <i class="ti ti-external-link"></i> Apply
             </button>
@@ -823,8 +859,140 @@
     btn.innerHTML = '<i class="ti ti-sparkles"></i> Analyze match';
   }
 
+  // ── LOCALSTORAGE PERSISTENCE ──
+  function saveToStorage() {
+    try {
+      localStorage.setItem('jf_applications', JSON.stringify(applications));
+      localStorage.setItem('jf_nextId', nextId);
+      localStorage.setItem('jf_profile', JSON.stringify({
+        currentTitle: document.getElementById('current-title')?.value || '',
+        degree: document.getElementById('degree')?.value || '',
+        background: document.getElementById('background')?.value || ''
+      }));
+    } catch(e) {}
+  }
+
+  function loadFromStorage() {
+    try {
+      const saved = localStorage.getItem('jf_applications');
+      if (saved) { applications = JSON.parse(saved); }
+      const savedId = localStorage.getItem('jf_nextId');
+      if (savedId) { nextId = parseInt(savedId); }
+      const profile = localStorage.getItem('jf_profile');
+      if (profile) {
+        const p = JSON.parse(profile);
+        setTimeout(() => {
+          if (document.getElementById('current-title')) document.getElementById('current-title').value = p.currentTitle || '';
+          if (document.getElementById('degree')) document.getElementById('degree').value = p.degree || '';
+          if (document.getElementById('background')) document.getElementById('background').value = p.background || '';
+        }, 50);
+      }
+    } catch(e) {}
+  }
+
+  // Auto-save profile fields on input
+  ['current-title','degree','background'].forEach(id => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', saveToStorage);
+    }, 100);
+  });
+
+  // Patch all functions that modify applications to also save
+  const _origAddToTracker = addToTracker;
+  function addToTracker(title, company, location, idx) {
+    _origAddToTracker(title, company, location, idx);
+    saveToStorage();
+  }
+  const _origSaveApp = saveApplication;
+  function saveApplication() {
+    _origSaveApp();
+    saveToStorage();
+  }
+  const _origUpdateStatus = updateStatus;
+  function updateStatus(id, newStatus) {
+    _origUpdateStatus(id, newStatus);
+    saveToStorage();
+  }
+  const _origDeleteApp = deleteApp;
+  function deleteApp(id) {
+    _origDeleteApp(id);
+    saveToStorage();
+  }
+
+  // ── COVER LETTER ──
+  let clJob = null;
+
+  function openCoverLetter(idx) {
+    clJob = (window.lastSearchJobs || [])[idx];
+    if (!clJob) return;
+    document.getElementById('cl-job-meta').textContent = `${clJob.title} at ${clJob.company} · ${clJob.location}`;
+    document.getElementById('cl-output').style.display = 'none';
+    document.getElementById('cl-output').textContent = '';
+    document.getElementById('cl-copy-btn').style.display = 'none';
+    document.getElementById('cl-generate-btn').disabled = false;
+    document.getElementById('cl-generate-btn').innerHTML = '<i class="ti ti-sparkles"></i> Generate cover letter';
+    document.getElementById('cl-modal-overlay').classList.add('open');
+  }
+
+  function closeCLModal() { document.getElementById('cl-modal-overlay').classList.remove('open'); }
+  function closeCLModalOutside(e) { if (e.target === document.getElementById('cl-modal-overlay')) closeCLModal(); }
+
+  async function generateCoverLetter() {
+    if (!clJob) return;
+    const btn = document.getElementById('cl-generate-btn');
+    const output = document.getElementById('cl-output');
+    const copyBtn = document.getElementById('cl-copy-btn');
+
+    const background = document.getElementById('background')?.value?.trim() || '';
+    const degree = document.getElementById('degree')?.value?.trim() || '';
+    const currentTitle = document.getElementById('current-title')?.value?.trim() || '';
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Writing...';
+    output.style.display = 'none';
+    copyBtn.style.display = 'none';
+
+    try {
+      const response = await fetch('/api/coverletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobTitle: clJob.title,
+          company: clJob.company,
+          jobSummary: clJob.summary,
+          jobSkills: clJob.skills,
+          currentTitle,
+          degree,
+          background
+        })
+      });
+      const data = await response.json();
+      output.textContent = data.letter || 'Could not generate letter. Please try again.';
+      output.style.display = 'block';
+      copyBtn.style.display = 'flex';
+    } catch(err) {
+      output.textContent = 'Error generating cover letter. Please try again.';
+      output.style.display = 'block';
+      console.error(err);
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-refresh"></i> Regenerate';
+  }
+
+  function copyCoverLetter() {
+    const text = document.getElementById('cl-output').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('cl-copy-btn');
+      btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+      setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy"></i> Copy to clipboard'; }, 2000);
+    });
+  }
+
   // Init
+  loadFromStorage();
   updateCounts();
+  renderSidebar();
 </script>
 </body>
 </html>
