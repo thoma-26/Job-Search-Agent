@@ -85,6 +85,15 @@
   .chip.active { background: var(--blue-bg); color: var(--blue-text); border-color: var(--blue-border); }
   .chip-section-label { font-size: 11px; color: var(--text-3); margin: 10px 0 6px; }
 
+  /* TAG INPUTS */
+  .tag-input-wrap { display: flex; flex-wrap: wrap; gap: 5px; padding: 7px 8px; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: var(--surface-2); cursor: text; min-height: 38px; align-items: center; }
+  .tag-input-wrap:focus-within { border-color: var(--text-2); }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag { display: flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--blue-bg); color: var(--blue-text); border-radius: 100px; font-size: 12px; font-weight: 500; }
+  .tag-remove { cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.6; border: none; background: none; color: inherit; padding: 0; }
+  .tag-remove:hover { opacity: 1; }
+  .tag-input { border: none; background: transparent; color: var(--text); font-size: 12px; outline: none; min-width: 80px; flex: 1; padding: 0; }
+
   .search-btn { width: 100%; padding: 10px; background: var(--accent); color: var(--bg); border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; letter-spacing: -0.01em; }
   .search-btn:hover { opacity: 0.82; }
   .search-btn:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -239,7 +248,7 @@
   <div class="hero">
     <div class="hero-tag"><i class="ti ti-sparkles"></i> Powered by large language models</div>
     <h1>Find roles that <span>actually fit</span> your background</h1>
-    <p>An AI agent that searches, scores, and ranks job listings based on your real skills — not just keyword matches.</p>
+    <p>An AI agent that searches, scores, and pulls relevant jobs based on your skills.</p>
   </div>
 
   <div class="main">
@@ -272,22 +281,15 @@
           </select>
         </div>
         <div class="chip-section-label">Industry</div>
-        <div class="chips" id="industry-chips">
-          <div class="chip active" data-val="fintech">Fintech</div>
-          <div class="chip active" data-val="enterprise-tech">Enterprise tech</div>
-          <div class="chip" data-val="saas">SaaS</div>
-          <div class="chip" data-val="ai-ml">AI / ML</div>
-          <div class="chip" data-val="payments">Payments</div>
-          <div class="chip" data-val="banking">Banking</div>
+        <div class="tag-input-wrap" id="industry-tag-wrap" onclick="document.getElementById('industry-input').focus()">
+          <div class="tags" id="industry-tags"></div>
+          <input type="text" id="industry-input" class="tag-input" placeholder="Type and press Enter..." />
         </div>
+
         <div class="chip-section-label" style="margin-top:12px;">Skills to match</div>
-        <div class="chips" id="skill-chips">
-          <div class="chip active" data-val="data-analytics">Data analytics</div>
-          <div class="chip active" data-val="excel-sql">Excel / SQL</div>
-          <div class="chip active" data-val="process-ops">Process ops</div>
-          <div class="chip" data-val="finance">Finance / FP&amp;A</div>
-          <div class="chip" data-val="audit">Audit</div>
-          <div class="chip" data-val="python">Python</div>
+        <div class="tag-input-wrap" id="skill-tag-wrap" onclick="document.getElementById('skill-input').focus()">
+          <div class="tags" id="skill-tags"></div>
+          <input type="text" id="skill-input" class="tag-input" placeholder="Type and press Enter..." />
         </div>
         <br />
         <button class="search-btn" id="search-btn" onclick="runSearch()">
@@ -422,10 +424,88 @@
     if (tab === 'dashboard') renderTable();
   }
 
-  // ── CHIP TOGGLES ──
-  document.querySelectorAll('.chip').forEach(c =>
-    c.addEventListener('click', () => c.classList.toggle('active'))
-  );
+  // ── TAG INPUTS ──
+  const industryDefaults = ['Fintech', 'Enterprise tech', 'SaaS', 'AI / ML', 'Payments', 'Banking'];
+  const skillDefaults = ['Data analytics', 'Excel / SQL', 'Process ops', 'Finance / FP&A', 'Audit', 'Python'];
+
+  let industryTags = ['Fintech', 'Enterprise tech'];
+  let skillTags = ['Data analytics', 'Excel / SQL', 'Process ops'];
+
+  function renderTags(tags, containerId, removeFunc) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = tags.map((t, i) => `
+      <span class="tag">${t}<button class="tag-remove" onclick="${removeFunc}(${i})">×</button></span>
+    `).join('');
+  }
+
+  function removeIndustryTag(i) { industryTags.splice(i, 1); renderTags(industryTags, 'industry-tags', 'removeIndustryTag'); }
+  function removeSkillTag(i) { skillTags.splice(i, 1); renderTags(skillTags, 'skill-tags', 'removeSkillTag'); }
+
+  function setupTagInput(inputId, tagsArr, containerId, removeFunc, defaults) {
+    const input = document.getElementById(inputId);
+
+    // Show suggestions on focus
+    input.addEventListener('focus', () => showSuggestions(inputId, tagsArr, defaults));
+    input.addEventListener('input', () => showSuggestions(inputId, tagsArr, defaults));
+    input.addEventListener('blur', () => setTimeout(() => hideSuggestions(inputId), 150));
+
+    input.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) {
+        e.preventDefault();
+        const val = input.value.trim().replace(/,$/, '');
+        if (val && !tagsArr.includes(val)) { tagsArr.push(val); renderTags(tagsArr, containerId, removeFunc); }
+        input.value = '';
+        hideSuggestions(inputId);
+      }
+      if (e.key === 'Backspace' && !input.value && tagsArr.length) {
+        tagsArr.pop(); renderTags(tagsArr, containerId, removeFunc);
+      }
+    });
+  }
+
+  function showSuggestions(inputId, tagsArr, defaults) {
+    const input = document.getElementById(inputId);
+    const query = input.value.toLowerCase();
+    const suggestions = defaults.filter(d => d.toLowerCase().includes(query) && !tagsArr.includes(d));
+    if (!suggestions.length) { hideSuggestions(inputId); return; }
+
+    let drop = document.getElementById(inputId + '-drop');
+    if (!drop) {
+      drop = document.createElement('div');
+      drop.id = inputId + '-drop';
+      drop.style.cssText = `position:absolute;background:var(--surface);border:0.5px solid var(--border-2);border-radius:var(--radius-md);padding:4px;z-index:50;min-width:160px;box-shadow:0 4px 12px rgba(0,0,0,0.1);`;
+      input.parentElement.style.position = 'relative';
+      input.parentElement.appendChild(drop);
+    }
+    drop.innerHTML = suggestions.map(s => `
+      <div style="padding:6px 10px;font-size:12px;cursor:pointer;border-radius:6px;color:var(--text)" 
+        onmouseenter="this.style.background='var(--surface-2)'" 
+        onmouseleave="this.style.background=''"
+        onmousedown="addSuggestion('${inputId}', '${s}')">${s}</div>
+    `).join('');
+    drop.style.display = 'block';
+  }
+
+  function hideSuggestions(inputId) {
+    const drop = document.getElementById(inputId + '-drop');
+    if (drop) drop.style.display = 'none';
+  }
+
+  function addSuggestion(inputId, val) {
+    const isIndustry = inputId === 'industry-input';
+    const tagsArr = isIndustry ? industryTags : skillTags;
+    const containerId = isIndustry ? 'industry-tags' : 'skill-tags';
+    const removeFunc = isIndustry ? 'removeIndustryTag' : 'removeSkillTag';
+    if (!tagsArr.includes(val)) { tagsArr.push(val); renderTags(tagsArr, containerId, removeFunc); }
+    document.getElementById(inputId).value = '';
+    hideSuggestions(inputId);
+  }
+
+  // Init tag inputs
+  renderTags(industryTags, 'industry-tags', 'removeIndustryTag');
+  renderTags(skillTags, 'skill-tags', 'removeSkillTag');
+  setupTagInput('industry-input', industryTags, 'industry-tags', 'removeIndustryTag', industryDefaults);
+  setupTagInput('skill-input', skillTags, 'skill-tags', 'removeSkillTag', skillDefaults);
 
   // ── APPLICATION DATA ──
   let applications = [
@@ -585,8 +665,8 @@
     const location = document.getElementById('location-input').value || 'New York, NY';
     const exp = document.getElementById('exp-select').value;
     const stage = document.getElementById('stage-select').value;
-    const industries = [...document.querySelectorAll('#industry-chips .chip.active')].map(c => c.dataset.val).join(', ');
-    const skills = [...document.querySelectorAll('#skill-chips .chip.active')].map(c => c.dataset.val).join(', ');
+    const industries = industryTags.join(', ') || 'any';
+    const skills = skillTags.join(', ') || 'any';
 
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner"></div> Searching...';
