@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -59,11 +59,13 @@ Find 4 matching jobs and score each for fit.`;
     });
 
     const data = await response.json();
+    console.log('Anthropic response status:', response.status);
+    console.log('Anthropic data:', JSON.stringify(data).slice(0, 200));
     const text = data.content.map(i => i.text || '').join('');
     const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
     res.status(200).json(parsed);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Search failed' });
+    console.error('Error:', err.message);
+    res.status(500).json({ error: err.message });
   }
 }
