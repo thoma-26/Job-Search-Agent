@@ -45,11 +45,11 @@ It helps users:
 
 ## Tech Stack
 
-- JavaScript (Frontend + Backend logic)  
+- JavaScript  
 - HTML / CSS  
-- Claude API (LLM reasoning and generation)  
-- JSearch API (job listings data source)  
-- Serverless functions (Vercel deployment)  
+- Claude API
+- JSearch API  
+- Serverless functions  
 
 ---
 
@@ -71,10 +71,4 @@ Add screenshots here once uploaded
 
 ---
 
-## What This Demonstrates
 
-- Full-stack application development  
-- LLM workflow design and integration  
-- API integration with real-world data sources  
-- Product thinking and system design  
-- End-to-end AI application architecture  
