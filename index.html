@@ -28,79 +28,52 @@
     --radius-md: 8px;
     --radius-lg: 12px;
   }
-
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1c1c1a;
-      --surface: #252523;
-      --surface-2: #2e2e2b;
-      --border: rgba(255,255,255,0.1);
-      --border-2: rgba(255,255,255,0.18);
-      --text: #f0ede8;
-      --text-2: #a8a6a0;
-      --text-3: #6b6966;
-      --blue-bg: #042C53;
-      --blue-text: #B5D4F4;
-      --green-bg: #173404;
-      --green-text: #C0DD97;
-      --amber-bg: #412402;
-      --amber-text: #FAC775;
-      --red-bg: #501313;
-      --red-text: #F7C1C1;
+      --bg: #1c1c1a; --surface: #252523; --surface-2: #2e2e2b;
+      --border: rgba(255,255,255,0.1); --border-2: rgba(255,255,255,0.18);
+      --text: #f0ede8; --text-2: #a8a6a0; --text-3: #6b6966;
+      --blue-bg: #042C53; --blue-text: #B5D4F4;
+      --green-bg: #173404; --green-text: #C0DD97;
+      --amber-bg: #412402; --amber-text: #FAC775;
+      --red-bg: #501313; --red-text: #F7C1C1;
       --accent: #f0ede8;
     }
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.5; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.5;
-  }
-
-  nav {
-    background: var(--surface);
-    border-bottom: 0.5px solid var(--border);
-    padding: 0 2rem;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .nav-logo {
-    font-size: 17px; font-weight: 600; letter-spacing: -0.02em;
-    color: var(--text); text-decoration: none;
-    display: flex; align-items: center; gap: 8px;
-  }
+  nav { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 0 2rem; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
   .nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text); }
   .nav-links { display: flex; align-items: center; gap: 1.5rem; }
   .nav-links a { font-size: 13px; color: var(--text-2); text-decoration: none; transition: color 0.15s; }
   .nav-links a:hover { color: var(--text); }
   .nav-badge { font-size: 11px; padding: 3px 10px; background: var(--blue-bg); color: var(--blue-text); border-radius: 100px; font-weight: 500; }
 
-  .hero { text-align: center; padding: 4rem 2rem 2.5rem; max-width: 600px; margin: 0 auto; }
-  .hero-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--text-2);
-    border: 0.5px solid var(--border-2); padding: 4px 12px;
-    border-radius: 100px; margin-bottom: 1.25rem; background: var(--surface);
-  }
-  .hero h1 { font-size: 36px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 1rem; }
+  /* TABS */
+  .tabs { display: flex; align-items: center; gap: 2px; padding: 0 2rem; background: var(--surface); border-bottom: 0.5px solid var(--border); }
+  .tab { padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; display: flex; align-items: center; gap: 6px; user-select: none; }
+  .tab:hover { color: var(--text-2); }
+  .tab.active { color: var(--text); border-bottom-color: var(--text); }
+  .tab-count { font-size: 11px; background: var(--surface-2); color: var(--text-3); padding: 2px 7px; border-radius: 100px; font-weight: 600; }
+  .tab.active .tab-count { background: var(--blue-bg); color: var(--blue-text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 3rem 2rem 2rem; max-width: 600px; margin: 0 auto; }
+  .hero-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); border: 0.5px solid var(--border-2); padding: 4px 12px; border-radius: 100px; margin-bottom: 1.25rem; background: var(--surface); }
+  .hero h1 { font-size: 32px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 1rem; }
   .hero h1 span { color: var(--text-2); }
-  .hero p { font-size: 15px; color: var(--text-2); line-height: 1.7; max-width: 460px; margin: 0 auto; }
+  .hero p { font-size: 14px; color: var(--text-2); line-height: 1.7; max-width: 440px; margin: 0 auto; }
 
+  /* SEARCH LAYOUT */
   .main { max-width: 820px; margin: 0 auto; padding: 0 1.5rem 4rem; display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start; }
-
-  .sidebar { position: sticky; top: 72px; }
+  .sidebar { position: sticky; top: 105px; }
   .panel { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
-  .panel-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-bottom: 1rem; }
+  .panel-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
 
   .field { margin-bottom: 12px; }
   .field label { display: block; font-size: 12px; color: var(--text-2); margin-bottom: 5px; font-weight: 500; }
@@ -123,7 +96,6 @@
 
   .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; min-height: 24px; }
   .results-title { font-size: 13px; font-weight: 500; color: var(--text-2); }
-
   .results { display: flex; flex-direction: column; gap: 10px; }
 
   .job-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; animation: fadeUp 0.3s ease both; transition: border-color 0.15s; }
@@ -146,7 +118,6 @@
 
   .job-summary { font-size: 13px; color: var(--text-2); line-height: 1.65; margin-bottom: 8px; }
   .fit-reason { font-size: 12px; color: var(--text-3); font-style: italic; margin-bottom: 10px; }
-
   .skills-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
   .skill-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--blue-bg); color: var(--blue-text); font-weight: 500; }
 
@@ -164,9 +135,7 @@
   .tracker-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
   .tracker-item:last-child { border-bottom: none; }
   .tracker-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .dot-saved { background: #378ADD; }
-  .dot-applied { background: #639922; }
-  .dot-interview { background: #BA7517; }
+  .dot-saved { background: #378ADD; } .dot-applied { background: #639922; } .dot-interview { background: #BA7517; } .dot-offer { background: #7F77DD; } .dot-rejected { background: #E24B4A; }
   .tracker-info { flex: 1; }
   .tracker-job { font-weight: 500; font-size: 13px; }
   .tracker-co { font-size: 11px; color: var(--text-3); }
@@ -174,20 +143,70 @@
   .status-saved     { background: var(--blue-bg);  color: var(--blue-text);  }
   .status-applied   { background: var(--green-bg); color: var(--green-text); }
   .status-interview { background: var(--amber-bg); color: var(--amber-text); }
+  .status-offer     { background: #EEEDFE; color: #3C3489; }
+  .status-rejected  { background: var(--red-bg); color: var(--red-text); }
 
   .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-3); font-size: 13px; }
   .empty-icon { font-size: 28px; margin-bottom: 10px; }
-
   .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3); border-top: 0.5px solid var(--border); margin-top: 2rem; }
+  /* DASHBOARD */
+  .dashboard { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .dashboard-header h2 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+  .add-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--accent); color: var(--bg); border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .add-btn:hover { opacity: 0.82; }
+
+  .dash-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .dash-stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 12px; text-align: center; cursor: pointer; transition: border-color 0.15s; }
+  .dash-stat:hover { border-color: var(--border-2); }
+  .dash-stat.active-filter { border-color: var(--text); }
+  .dash-stat-num { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+  .dash-stat-label { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+  .app-table { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .app-table-header { display: grid; grid-template-columns: 1fr 1fr 120px 100px 36px; gap: 0; padding: 10px 16px; border-bottom: 0.5px solid var(--border); background: var(--surface-2); }
+  .app-table-header span { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); }
+
+  .app-row { display: grid; grid-template-columns: 1fr 1fr 120px 100px 36px; gap: 0; padding: 12px 16px; border-bottom: 0.5px solid var(--border); align-items: center; transition: background 0.1s; animation: fadeUp 0.25s ease both; }
+  .app-row:last-child { border-bottom: none; }
+  .app-row:hover { background: var(--surface-2); }
+
+  .app-role { font-size: 14px; font-weight: 500; }
+  .app-company { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+  .app-location { font-size: 12px; color: var(--text-3); }
+  .app-date { font-size: 12px; color: var(--text-3); }
+
+  .status-select { font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 100px; border: none; cursor: pointer; appearance: none; -webkit-appearance: none; text-align: center; }
+
+  .delete-btn { width: 28px; height: 28px; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: transparent; color: var(--text-3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.15s; }
+  .delete-btn:hover { background: var(--red-bg); color: var(--red-text); border-color: transparent; }
+
+  /* ADD MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 420px; border: 0.5px solid var(--border-2); }
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
+  .modal-field { margin-bottom: 12px; }
+  .modal-field label { display: block; font-size: 12px; color: var(--text-2); margin-bottom: 5px; font-weight: 500; }
+  .modal-field input, .modal-field select { width: 100%; font-size: 13px; padding: 8px 10px; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: var(--surface-2); color: var(--text); appearance: none; -webkit-appearance: none; }
+  .modal-field input:focus, .modal-field select:focus { outline: none; border-color: var(--text-2); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 1.25rem; }
+  .modal-cancel { flex: 1; padding: 9px; font-size: 13px; border-radius: var(--radius-md); border: 0.5px solid var(--border-2); background: var(--surface-2); color: var(--text); cursor: pointer; }
+  .modal-save { flex: 2; padding: 9px; font-size: 13px; font-weight: 600; border-radius: var(--radius-md); border: none; background: var(--accent); color: var(--bg); cursor: pointer; }
+
+  footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-3); border-top: 0.5px solid var(--border); }
 
   @media (max-width: 640px) {
     .main { grid-template-columns: 1fr; }
     .sidebar { position: static; }
-    .hero h1 { font-size: 26px; }
+    .hero h1 { font-size: 24px; }
     .stats-row { grid-template-columns: 1fr 1fr; }
+    .dash-stats { grid-template-columns: repeat(3, 1fr); }
+    .app-table-header, .app-row { grid-template-columns: 1fr 100px 36px; }
+    .app-table-header span:nth-child(2), .app-row > div:nth-child(2),
+    .app-table-header span:nth-child(4), .app-row > div:nth-child(4) { display: none; }
     nav { padding: 0 1rem; }
   }
 </style>
@@ -201,151 +220,359 @@
   </a>
   <div class="nav-links">
     <span class="nav-badge">AI-powered</span>
-    <a href="#tracker">Tracker</a>
     <a href="https://github.com" target="_blank">GitHub</a>
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-tag">
-    <i class="ti ti-sparkles"></i>
-    Powered by large language models
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('search')">
+    <i class="ti ti-search" style="font-size:14px"></i> Search
   </div>
-  <h1>Find roles that <span>actually fit</span> your background</h1>
-  <p>An AI agent that searches, scores, and ranks job listings based on your real skills — not just keyword matches.</p>
+  <div class="tab" onclick="switchTab('dashboard')" id="dashboard-tab">
+    <i class="ti ti-layout-dashboard" style="font-size:14px"></i> Dashboard
+    <span class="tab-count" id="tab-count">3</span>
+  </div>
 </div>
 
-<div class="main">
-  <div class="sidebar">
-    <div class="panel">
-      <div class="panel-title">Search criteria</div>
-      <div class="field">
-        <label>Role title</label>
-        <input type="text" id="role-input" value="Business Operations Analyst" />
-      </div>
-      <div class="field">
-        <label>Location</label>
-        <input type="text" id="location-input" value="New York, NY" />
-      </div>
-      <div class="field">
-        <label>Experience level</label>
-        <select id="exp-select">
-          <option value="entry">Entry level (0–2 yrs)</option>
-          <option value="mid" selected>Mid level (2–5 yrs)</option>
-          <option value="senior">Senior (5+ yrs)</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Company stage</label>
-        <select id="stage-select">
-          <option value="any">Any stage</option>
-          <option value="startup">Startup / Series A–B</option>
-          <option value="growth" selected>Growth stage</option>
-          <option value="enterprise">Enterprise / Public</option>
-        </select>
+<!-- SEARCH TAB -->
+<div class="tab-content active" id="tab-search">
+  <div class="hero">
+    <div class="hero-tag"><i class="ti ti-sparkles"></i> Powered by large language models</div>
+    <h1>Find roles that <span>actually fit</span> your background</h1>
+    <p>An AI agent that searches, scores, and ranks job listings based on your real skills — not just keyword matches.</p>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Search criteria</div>
+        <div class="field">
+          <label>Role title</label>
+          <input type="text" id="role-input" value="Business Operations Analyst" />
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input type="text" id="location-input" value="New York, NY" />
+        </div>
+        <div class="field">
+          <label>Experience level</label>
+          <select id="exp-select">
+            <option value="entry">Entry level (0–2 yrs)</option>
+            <option value="mid" selected>Mid level (2–5 yrs)</option>
+            <option value="senior">Senior (5+ yrs)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Company stage</label>
+          <select id="stage-select">
+            <option value="any">Any stage</option>
+            <option value="startup">Startup / Series A–B</option>
+            <option value="growth" selected>Growth stage</option>
+            <option value="enterprise">Enterprise / Public</option>
+          </select>
+        </div>
+        <div class="chip-section-label">Industry</div>
+        <div class="chips" id="industry-chips">
+          <div class="chip active" data-val="fintech">Fintech</div>
+          <div class="chip active" data-val="enterprise-tech">Enterprise tech</div>
+          <div class="chip" data-val="saas">SaaS</div>
+          <div class="chip" data-val="ai-ml">AI / ML</div>
+          <div class="chip" data-val="payments">Payments</div>
+          <div class="chip" data-val="banking">Banking</div>
+        </div>
+        <div class="chip-section-label" style="margin-top:12px;">Skills to match</div>
+        <div class="chips" id="skill-chips">
+          <div class="chip active" data-val="data-analytics">Data analytics</div>
+          <div class="chip active" data-val="excel-sql">Excel / SQL</div>
+          <div class="chip active" data-val="process-ops">Process ops</div>
+          <div class="chip" data-val="finance">Finance / FP&amp;A</div>
+          <div class="chip" data-val="audit">Audit</div>
+          <div class="chip" data-val="python">Python</div>
+        </div>
+        <br />
+        <button class="search-btn" id="search-btn" onclick="runSearch()">
+          <i class="ti ti-search"></i> Find matching roles
+        </button>
       </div>
 
-      <div class="chip-section-label">Industry</div>
-      <div class="chips" id="industry-chips">
-        <div class="chip active" data-val="fintech">Fintech</div>
-        <div class="chip active" data-val="enterprise-tech">Enterprise tech</div>
-        <div class="chip" data-val="saas">SaaS</div>
-        <div class="chip" data-val="ai-ml">AI / ML</div>
-        <div class="chip" data-val="payments">Payments</div>
-        <div class="chip" data-val="banking">Banking</div>
+      <div class="panel">
+        <div class="panel-title">
+          <span>Recent saves</span>
+          <span id="sidebar-count" style="font-weight:400;color:var(--text-3);">3 roles</span>
+        </div>
+        <div id="tracker-list">
+          <div class="tracker-item">
+            <div class="tracker-dot dot-interview"></div>
+            <div class="tracker-info"><div class="tracker-job">Biz Ops Associate</div><div class="tracker-co">Stripe · New York, NY</div></div>
+            <span class="tracker-status status-interview">Interview</span>
+          </div>
+          <div class="tracker-item">
+            <div class="tracker-dot dot-applied"></div>
+            <div class="tracker-info"><div class="tracker-job">Operations Analyst</div><div class="tracker-co">Snorkel AI · Remote</div></div>
+            <span class="tracker-status status-applied">Applied</span>
+          </div>
+          <div class="tracker-item">
+            <div class="tracker-dot dot-saved"></div>
+            <div class="tracker-info"><div class="tracker-job">Strategy &amp; Ops</div><div class="tracker-co">Plaid · New York, NY</div></div>
+            <span class="tracker-status status-saved">Saved</span>
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div class="chip-section-label" style="margin-top:12px;">Skills to match</div>
-      <div class="chips" id="skill-chips">
-        <div class="chip active" data-val="data-analytics">Data analytics</div>
-        <div class="chip active" data-val="excel-sql">Excel / SQL</div>
-        <div class="chip active" data-val="process-ops">Process ops</div>
-        <div class="chip" data-val="finance">Finance / FP&amp;A</div>
-        <div class="chip" data-val="audit">Audit</div>
-        <div class="chip" data-val="python">Python</div>
+    <div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" id="stat-found">—</div><div class="stat-label">Roles found</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-high">—</div><div class="stat-label">High fit</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-tracked">3</div><div class="stat-label">Tracked</div></div>
       </div>
+      <div class="results-header">
+        <span class="results-title" id="results-title">Configure search and hit find</span>
+      </div>
+      <div id="thinking-box"></div>
+      <div class="results" id="results-container">
+        <div class="empty-state">
+          <div class="empty-icon"><i class="ti ti-rocket"></i></div>
+          Set your criteria and let the agent find your matches
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-      <br />
-      <button class="search-btn" id="search-btn" onclick="runSearch()">
-        <i class="ti ti-search"></i>
-        Find matching roles
+<!-- DASHBOARD TAB -->
+<div class="tab-content" id="tab-dashboard">
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h2>Application dashboard</h2>
+      <button class="add-btn" onclick="openModal()">
+        <i class="ti ti-plus" style="font-size:14px"></i> Add application
       </button>
     </div>
 
-    <div class="panel" id="tracker">
-      <div class="panel-title" style="display:flex;justify-content:space-between;">
-        <span>Application tracker</span>
-        <span id="tracker-count" style="font-weight:400;color:var(--text-3);">3 roles</span>
+    <div class="dash-stats">
+      <div class="dash-stat" onclick="filterApps('all')" id="filter-all">
+        <div class="dash-stat-num" id="ds-total">3</div>
+        <div class="dash-stat-label">Total</div>
       </div>
-      <div id="tracker-list">
-        <div class="tracker-item">
-          <div class="tracker-dot dot-interview"></div>
-          <div class="tracker-info">
-            <div class="tracker-job">Biz Ops Associate</div>
-            <div class="tracker-co">Stripe · New York, NY</div>
-          </div>
-          <span class="tracker-status status-interview">Interview</span>
-        </div>
-        <div class="tracker-item">
-          <div class="tracker-dot dot-applied"></div>
-          <div class="tracker-info">
-            <div class="tracker-job">Operations Analyst</div>
-            <div class="tracker-co">Snorkel AI · Remote</div>
-          </div>
-          <span class="tracker-status status-applied">Applied</span>
-        </div>
-        <div class="tracker-item">
-          <div class="tracker-dot dot-saved"></div>
-          <div class="tracker-info">
-            <div class="tracker-job">Strategy &amp; Ops</div>
-            <div class="tracker-co">Plaid · New York, NY</div>
-          </div>
-          <span class="tracker-status status-saved">Saved</span>
-        </div>
+      <div class="dash-stat" onclick="filterApps('Saved')" id="filter-saved">
+        <div class="dash-stat-num" id="ds-saved">1</div>
+        <div class="dash-stat-label">Saved</div>
       </div>
-    </div>
-  </div>
-
-  <div>
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-num" id="stat-found">—</div>
-        <div class="stat-label">Roles found</div>
+      <div class="dash-stat" onclick="filterApps('Applied')" id="filter-applied">
+        <div class="dash-stat-num" id="ds-applied">1</div>
+        <div class="dash-stat-label">Applied</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num" id="stat-high">—</div>
-        <div class="stat-label">High fit</div>
+      <div class="dash-stat" onclick="filterApps('Interview')" id="filter-interview">
+        <div class="dash-stat-num" id="ds-interview">1</div>
+        <div class="dash-stat-label">Interview</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num" id="stat-tracked">3</div>
-        <div class="stat-label">Tracked</div>
+      <div class="dash-stat" onclick="filterApps('Offer')" id="filter-offer">
+        <div class="dash-stat-num" id="ds-offer">0</div>
+        <div class="dash-stat-label">Offer</div>
       </div>
     </div>
 
-    <div class="results-header">
-      <span class="results-title" id="results-title">Configure search and hit find</span>
-    </div>
-
-    <div id="thinking-box"></div>
-
-    <div class="results" id="results-container">
-      <div class="empty-state">
-        <div class="empty-icon"><i class="ti ti-rocket"></i></div>
-        Set your criteria and let the agent find your matches
+    <div class="app-table">
+      <div class="app-table-header">
+        <span>Role</span>
+        <span>Company</span>
+        <span>Status</span>
+        <span>Date added</span>
+        <span></span>
       </div>
+      <div id="app-table-body"></div>
     </div>
   </div>
 </div>
 
-<footer>
-  JobFinder — built with HTML, CSS, JavaScript &amp; LLM APIs &nbsp;·&nbsp; open source
-</footer>
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">Add application</div>
+    <div class="modal-field"><label>Role title</label><input type="text" id="m-role" placeholder="e.g. Operations Analyst" /></div>
+    <div class="modal-field"><label>Company</label><input type="text" id="m-company" placeholder="e.g. Stripe" /></div>
+    <div class="modal-field"><label>Location</label><input type="text" id="m-location" placeholder="e.g. New York, NY" /></div>
+    <div class="modal-field">
+      <label>Status</label>
+      <select id="m-status">
+        <option value="Saved">Saved</option>
+        <option value="Applied">Applied</option>
+        <option value="Interview">Interview</option>
+        <option value="Offer">Offer</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveApplication()">Save application</button>
+    </div>
+  </div>
+</div>
+
+<footer>JobFinder — built with HTML, CSS, JavaScript &amp; LLM APIs &nbsp;·&nbsp; open source</footer>
 
 <script>
+  // ── TAB SWITCHING ──
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    if (tab === 'dashboard') renderTable();
+  }
+
+  // ── CHIP TOGGLES ──
   document.querySelectorAll('.chip').forEach(c =>
     c.addEventListener('click', () => c.classList.toggle('active'))
   );
 
+  // ── APPLICATION DATA ──
+  let applications = [
+    { id: 1, role: 'Biz Ops Associate', company: 'Stripe', location: 'New York, NY', status: 'Interview', date: '2026-05-20' },
+    { id: 2, role: 'Operations Analyst', company: 'Snorkel AI', location: 'Remote', status: 'Applied', date: '2026-05-25' },
+    { id: 3, role: 'Strategy & Ops', company: 'Plaid', location: 'New York, NY', status: 'Saved', date: '2026-06-01' }
+  ];
+  let nextId = 4;
+  let currentFilter = 'all';
+
+  const statusColors = {
+    Saved:     'status-saved',
+    Applied:   'status-applied',
+    Interview: 'status-interview',
+    Offer:     'status-offer',
+    Rejected:  'status-rejected'
+  };
+  const dotColors = {
+    Saved: 'dot-saved', Applied: 'dot-applied', Interview: 'dot-interview',
+    Offer: 'dot-offer', Rejected: 'dot-rejected'
+  };
+
+  function updateCounts() {
+    const total = applications.length;
+    const saved = applications.filter(a => a.status === 'Saved').length;
+    const applied = applications.filter(a => a.status === 'Applied').length;
+    const interview = applications.filter(a => a.status === 'Interview').length;
+    const offer = applications.filter(a => a.status === 'Offer').length;
+
+    document.getElementById('ds-total').textContent = total;
+    document.getElementById('ds-saved').textContent = saved;
+    document.getElementById('ds-applied').textContent = applied;
+    document.getElementById('ds-interview').textContent = interview;
+    document.getElementById('ds-offer').textContent = offer;
+    document.getElementById('tab-count').textContent = total;
+    document.getElementById('stat-tracked').textContent = total;
+    document.getElementById('sidebar-count').textContent = `${total} roles`;
+  }
+
+  function renderTable() {
+    const body = document.getElementById('app-table-body');
+    const filtered = currentFilter === 'all' ? applications : applications.filter(a => a.status === currentFilter);
+
+    if (filtered.length === 0) {
+      body.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="ti ti-clipboard-list"></i></div>No applications here yet</div>';
+      return;
+    }
+
+    body.innerHTML = filtered.map((app, i) => `
+      <div class="app-row" style="animation-delay:${i*0.04}s">
+        <div>
+          <div class="app-role">${app.role}</div>
+          <div class="app-company">${app.location}</div>
+        </div>
+        <div class="app-company">${app.company}</div>
+        <div>
+          <select class="status-select ${statusColors[app.status]}" onchange="updateStatus(${app.id}, this.value)">
+            <option ${app.status==='Saved'?'selected':''}>Saved</option>
+            <option ${app.status==='Applied'?'selected':''}>Applied</option>
+            <option ${app.status==='Interview'?'selected':''}>Interview</option>
+            <option ${app.status==='Offer'?'selected':''}>Offer</option>
+            <option ${app.status==='Rejected'?'selected':''}>Rejected</option>
+          </select>
+        </div>
+        <div class="app-date">${formatDate(app.date)}</div>
+        <button class="delete-btn" onclick="deleteApp(${app.id})"><i class="ti ti-trash" style="font-size:13px"></i></button>
+      </div>`).join('');
+
+    // Apply color to selects after render
+    body.querySelectorAll('.status-select').forEach(sel => styleSelect(sel));
+    updateCounts();
+  }
+
+  function styleSelect(sel) {
+    const map = { Saved: ['#E6F1FB','#0C447C'], Applied: ['#EAF3DE','#3B6D11'], Interview: ['#FAEEDA','#854F0B'], Offer: ['#EEEDFE','#3C3489'], Rejected: ['#FCEBEB','#A32D2D'] };
+    const colors = map[sel.value] || ['#f3f2ef','#5f5e5a'];
+    sel.style.background = colors[0];
+    sel.style.color = colors[1];
+  }
+
+  function updateStatus(id, newStatus) {
+    const app = applications.find(a => a.id === id);
+    if (app) {
+      app.status = newStatus;
+      renderTable();
+      renderSidebar();
+    }
+  }
+
+  function deleteApp(id) {
+    applications = applications.filter(a => a.id !== id);
+    renderTable();
+    renderSidebar();
+  }
+
+  function filterApps(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.dash-stat').forEach(s => s.classList.remove('active-filter'));
+    document.getElementById(`filter-${filter === 'all' ? 'all' : filter.toLowerCase()}`).classList.add('active-filter');
+    renderTable();
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function renderSidebar() {
+    const list = document.getElementById('tracker-list');
+    const recent = [...applications].reverse().slice(0, 5);
+    list.innerHTML = recent.map(app => `
+      <div class="tracker-item">
+        <div class="tracker-dot ${dotColors[app.status]}"></div>
+        <div class="tracker-info">
+          <div class="tracker-job">${app.role}</div>
+          <div class="tracker-co">${app.company} · ${app.location}</div>
+        </div>
+        <span class="tracker-status ${statusColors[app.status]}">${app.status}</span>
+      </div>`).join('');
+    updateCounts();
+  }
+
+  // ── MODAL ──
+  function openModal() { document.getElementById('modal-overlay').classList.add('open'); }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('m-role').value = '';
+    document.getElementById('m-company').value = '';
+    document.getElementById('m-location').value = '';
+    document.getElementById('m-status').value = 'Saved';
+  }
+  function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+  function saveApplication() {
+    const role = document.getElementById('m-role').value.trim();
+    const company = document.getElementById('m-company').value.trim();
+    const location = document.getElementById('m-location').value.trim();
+    const status = document.getElementById('m-status').value;
+    if (!role || !company) return;
+
+    applications.push({ id: nextId++, role, company, location: location || 'Not specified', status, date: new Date().toISOString().split('T')[0] });
+    closeModal();
+    renderTable();
+    renderSidebar();
+  }
+
+  // ── SEARCH ──
   let trackedCount = 3;
 
   async function runSearch() {
@@ -417,12 +644,12 @@
           <div class="fit-reason">${job.fitReason}</div>
           <div class="skills-row">${skillTags}</div>
           <div class="job-actions">
-            <button class="action-btn" id="save-btn-${i}" onclick="saveJob('${job.title.replace(/'/g,"\\'")}','${job.company.replace(/'/g,"\\'")}',${i})">
+            <button class="action-btn" id="save-btn-${i}" onclick="addToTracker('${job.title.replace(/'/g,"\\'")}','${job.company.replace(/'/g,"\\'")}',${i})">
               <i class="ti ti-bookmark"></i> Save role
             </button>
             <button class="action-btn primary" onclick="window.open('${job.applyUrl}', '_blank')">
-            <i class="ti ti-external-link"></i> View &amp; apply
-          </button>
+              <i class="ti ti-external-link"></i> View &amp; apply
+            </button>
           </div>`;
         resultsEl.appendChild(card);
       });
@@ -437,29 +664,19 @@
     btn.innerHTML = '<i class="ti ti-search"></i> Find matching roles';
   }
 
-  function saveJob(title, company, idx) {
-    const list = document.getElementById('tracker-list');
-    const already = [...list.querySelectorAll('.tracker-job')].some(el => el.textContent === title);
+  function addToTracker(title, company, idx) {
+    const already = applications.some(a => a.role === title && a.company === company);
     if (already) return;
 
-    const item = document.createElement('div');
-    item.className = 'tracker-item';
-    item.innerHTML = `
-      <div class="tracker-dot dot-saved"></div>
-      <div class="tracker-info">
-        <div class="tracker-job">${title}</div>
-        <div class="tracker-co">${company}</div>
-      </div>
-      <span class="tracker-status status-saved">Saved</span>`;
-    list.appendChild(item);
-
-    trackedCount++;
-    document.getElementById('tracker-count').textContent = `${trackedCount} roles`;
-    document.getElementById('stat-tracked').textContent = trackedCount;
+    applications.push({ id: nextId++, role: title, company, location: 'New York, NY', status: 'Saved', date: new Date().toISOString().split('T')[0] });
+    renderSidebar();
 
     const saveBtn = document.getElementById(`save-btn-${idx}`);
-    if (saveBtn) { saveBtn.textContent = '✓ Saved'; saveBtn.disabled = true; }
+    if (saveBtn) { saveBtn.innerHTML = '<i class="ti ti-check"></i> Saved'; saveBtn.disabled = true; }
   }
+
+  // Init
+  updateCounts();
 </script>
 </body>
 </html>
