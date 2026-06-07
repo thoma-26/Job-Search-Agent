@@ -420,9 +420,9 @@
             <button class="action-btn" id="save-btn-${i}" onclick="saveJob('${job.title.replace(/'/g,"\\'")}','${job.company.replace(/'/g,"\\'")}',${i})">
               <i class="ti ti-bookmark"></i> Save role
             </button>
-            <button class="action-btn primary">
-              <i class="ti ti-external-link"></i> View &amp; apply
-            </button>
+            <button class="action-btn primary" onclick="window.open('${job.applyUrl}', '_blank')">
+            <i class="ti ti-external-link"></i> View &amp; apply
+          </button>
           </div>`;
         resultsEl.appendChild(card);
       });
