@@ -270,6 +270,22 @@
   <div class="main">
     <div class="sidebar">
       <div class="panel">
+        <div class="panel-title">Your profile</div>
+        <div class="field">
+          <label>Current title / role</label>
+          <input type="text" id="current-title" placeholder="e.g. Marketing Coordinator" />
+        </div>
+        <div class="field">
+          <label>Education</label>
+          <input type="text" id="degree" placeholder="e.g. BS Finance, MBA" />
+        </div>
+        <div class="field">
+          <label>Background summary</label>
+          <textarea id="background" placeholder="Brief summary of your experience..." style="width:100%;font-size:13px;padding:8px 10px;border-radius:var(--radius-md);border:0.5px solid var(--border-2);background:var(--surface-2);color:var(--text);resize:vertical;min-height:72px;outline:none;font-family:inherit;line-height:1.5;"></textarea>
+        </div>
+      </div>
+
+      <div class="panel">
         <div class="panel-title">Search criteria</div>
         <div class="field">
           <label>Role title</label>
@@ -609,7 +625,11 @@
       const response = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role, location, exp, stage, industries, skills })
+        body: JSON.stringify({ role, location, exp, stage, industries, skills,
+          background: document.getElementById('background').value.trim(),
+          degree: document.getElementById('degree').value.trim(),
+          currentTitle: document.getElementById('current-title').value.trim()
+        })
       });
 
       const parsed = await response.json();
