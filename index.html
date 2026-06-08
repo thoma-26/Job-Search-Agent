@@ -286,17 +286,33 @@
     <div class="sidebar">
       <div class="panel">
         <div class="panel-title">Your profile</div>
-        <div class="field">
-          <label>Current title / role</label>
-          <input type="text" id="current-title" placeholder="e.g. Marketing Coordinator" />
+
+        <!-- Resume upload -->
+        <div id="profile-upload-box" onclick="document.getElementById('profile-resume-input').click()" style="border:1.5px dashed var(--border-2);border-radius:var(--radius-md);padding:1rem;text-align:center;cursor:pointer;margin-bottom:12px;transition:all 0.15s;background:var(--surface-2);">
+          <div style="font-size:20px;color:var(--text-3);margin-bottom:4px;"><i class="ti ti-file-upload"></i></div>
+          <div id="profile-upload-label" style="font-size:12px;font-weight:500;color:var(--text-2);">Upload resume to auto-fill</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">PDF or TXT · click to browse</div>
         </div>
-        <div class="field">
-          <label>Education</label>
-          <input type="text" id="degree" placeholder="e.g. BS Finance, MBA" />
+        <input type="file" id="profile-resume-input" accept=".pdf,.txt" style="display:none" onchange="handleProfileResume(this)" />
+
+        <div id="profile-extracting" style="display:none;text-align:center;padding:8px;font-size:12px;color:var(--text-2);">
+          <div class="spinner" style="margin:0 auto 6px;border-top-color:var(--text-2);border-color:var(--border-2);"></div>
+          Extracting your profile...
         </div>
-        <div class="field">
-          <label>Background summary</label>
-          <textarea id="background" placeholder="Brief summary of your experience..." style="width:100%;font-size:13px;padding:8px 10px;border-radius:var(--radius-md);border:0.5px solid var(--border-2);background:var(--surface-2);color:var(--text);resize:vertical;min-height:72px;outline:none;font-family:inherit;line-height:1.5;"></textarea>
+
+        <div id="profile-fields">
+          <div class="field">
+            <label>Current title / role</label>
+            <input type="text" id="current-title" placeholder="e.g. Marketing Coordinator" />
+          </div>
+          <div class="field">
+            <label>Education</label>
+            <input type="text" id="degree" placeholder="e.g. BS Finance, MBA" />
+          </div>
+          <div class="field">
+            <label>Background summary</label>
+            <textarea id="background" placeholder="Brief summary of your experience..." style="width:100%;font-size:13px;padding:8px 10px;border-radius:var(--radius-md);border:0.5px solid var(--border-2);background:var(--surface-2);color:var(--text);resize:vertical;min-height:72px;outline:none;font-family:inherit;line-height:1.5;"></textarea>
+          </div>
         </div>
       </div>
 
@@ -588,10 +604,10 @@
 
   function updateStatus(id, newStatus) {
     const app = applications.find(a => a.id === id);
-    if (app) { app.status = newStatus; renderTable(); renderSidebar(); }
+    if (app) { app.status = newStatus; renderTable(); renderSidebar(); saveToStorage(); }
   }
 
-  function deleteApp(id) { applications = applications.filter(a => a.id !== id); renderTable(); renderSidebar(); }
+  function deleteApp(id) { applications = applications.filter(a => a.id !== id); renderTable(); renderSidebar(); saveToStorage(); }
 
   function filterApps(filter) {
     currentFilter = filter;
@@ -630,7 +646,7 @@
     const status = document.getElementById('m-status').value;
     if (!role || !company) return;
     applications.push({ id: nextId++, role, company, location: location||'Not specified', status, date: new Date().toISOString().split('T')[0] });
-    closeModal(); renderTable(); renderSidebar();
+    closeModal(); renderTable(); renderSidebar(); saveToStorage();
   }
 
   // ── SEARCH ──
@@ -736,6 +752,7 @@
     if (already) return;
     applications.push({ id: nextId++, role: title, company, location, status: 'Saved', date: new Date().toISOString().split('T')[0] });
     renderSidebar();
+    saveToStorage();
     const saveBtn = document.getElementById(`save-btn-${idx}`);
     if (saveBtn) { saveBtn.innerHTML = '<i class="ti ti-check"></i> Saved'; saveBtn.disabled = true; }
   }
@@ -859,6 +876,64 @@
     btn.innerHTML = '<i class="ti ti-sparkles"></i> Analyze match';
   }
 
+  // ── PROFILE RESUME UPLOAD ──
+  let profileResumeText = '';
+
+  function handleProfileResume(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const uploadBox = document.getElementById('profile-upload-box');
+    const uploadLabel = document.getElementById('profile-upload-label');
+    const extracting = document.getElementById('profile-extracting');
+
+    uploadLabel.textContent = file.name;
+    uploadBox.style.borderColor = 'var(--blue-border)';
+    uploadBox.style.background = 'var(--blue-bg)';
+    uploadBox.style.color = 'var(--blue-text)';
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      profileResumeText = e.target.result;
+      // Also sync to resume match tab
+      resumeText = profileResumeText;
+
+      extracting.style.display = 'block';
+
+      try {
+        const response = await fetch('/api/extractprofile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resumeText: profileResumeText.slice(0, 5000) })
+        });
+        const data = await response.json();
+
+        if (data.currentTitle) document.getElementById('current-title').value = data.currentTitle;
+        if (data.degree) document.getElementById('degree').value = data.degree;
+        if (data.background) document.getElementById('background').value = data.background;
+
+        // Also pre-fill skills and industry tags if returned
+        if (data.skills && data.skills.length) {
+          skillTagsList.length = 0;
+          data.skills.forEach(s => skillTagsList.push(s));
+          renderTags(skillTagsList, 'skill-tags', 'removeSkillTag');
+        }
+        if (data.industries && data.industries.length) {
+          industryTags.length = 0;
+          data.industries.forEach(ind => industryTags.push(ind));
+          renderTags(industryTags, 'industry-tags', 'removeIndustryTag');
+        }
+
+        saveToStorage();
+      } catch(err) {
+        console.error('Profile extraction failed:', err);
+      }
+
+      extracting.style.display = 'none';
+    };
+    reader.readAsText(file);
+  }
+
   // ── LOCALSTORAGE PERSISTENCE ──
   function saveToStorage() {
     try {
@@ -899,26 +974,7 @@
   });
 
   // Patch all functions that modify applications to also save
-  const _origAddToTracker = addToTracker;
-  function addToTracker(title, company, location, idx) {
-    _origAddToTracker(title, company, location, idx);
-    saveToStorage();
-  }
-  const _origSaveApp = saveApplication;
-  function saveApplication() {
-    _origSaveApp();
-    saveToStorage();
-  }
-  const _origUpdateStatus = updateStatus;
-  function updateStatus(id, newStatus) {
-    _origUpdateStatus(id, newStatus);
-    saveToStorage();
-  }
-  const _origDeleteApp = deleteApp;
-  function deleteApp(id) {
-    _origDeleteApp(id);
-    saveToStorage();
-  }
+  // saveToStorage is called directly inside each function — no overrides needed
 
   // ── COVER LETTER ──
   let clJob = null;
